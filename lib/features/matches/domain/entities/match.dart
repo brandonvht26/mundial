@@ -10,8 +10,11 @@ class Match {
   final MatchStatus status;
   final DateTime dateTime;
   final String? stadium;
+  final int? stadiumCapacity;
   final String? group;
   final String phase;
+  final List<String> homeScorers;
+  final List<String> awayScorers;
 
   const Match({
     required this.id,
@@ -22,8 +25,11 @@ class Match {
     required this.status,
     required this.dateTime,
     this.stadium,
+    this.stadiumCapacity,
     this.group,
     required this.phase,
+    this.homeScorers = const [],
+    this.awayScorers = const [],
   });
 
   String get scoreDisplay {

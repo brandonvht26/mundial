@@ -97,6 +97,7 @@ class _MatchCardState extends State<MatchCard> {
   Widget _buildTeamsRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: Column(
@@ -121,9 +122,11 @@ class _MatchCardState extends State<MatchCard> {
             ],
           ),
         ),
-        Hero(
-          tag: 'score_${widget.match.id}',
-          child: Material(
+        Padding(
+          padding: const EdgeInsets.only(top: 7),
+          child: Hero(
+            tag: 'score_${widget.match.id}',
+            child: Material(
             color: Colors.transparent,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -146,9 +149,10 @@ class _MatchCardState extends State<MatchCard> {
                     color: Colors.white,
                   ),
                 ),
+                ),
               ),
+            ),
           ),
-        ),
         Expanded(
           child: Column(
             children: [

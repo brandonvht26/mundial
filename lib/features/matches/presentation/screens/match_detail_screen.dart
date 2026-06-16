@@ -14,22 +14,27 @@ class MatchDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detalle del Partido', style: TextStyle(fontWeight: FontWeight.bold)),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: AppTheme.primaryGradient,
-          ),
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/wallpaper.png'),
+          fit: BoxFit.cover,
+          alignment: Alignment.topCenter,
         ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/wallpaper.png'),
-            fit: BoxFit.cover,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text('Detalle del Partido', style: TextStyle(fontWeight: FontWeight.bold)),
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: AppTheme.primaryGradient,
+            ),
           ),
         ),
+      body: SizedBox(
+        width: double.infinity,
+        height: double.infinity,
         child: FutureBuilder<Match>(
           future: ServiceLocator.getMatchDetail(matchId),
           builder: (context, snapshot) {
@@ -65,6 +70,7 @@ class MatchDetailScreen extends StatelessWidget {
             return _buildDetail(context, match);
           },
         ),
+      ),
       ),
     );
   }
@@ -103,6 +109,7 @@ class MatchDetailScreen extends StatelessWidget {
           const SizedBox(height: 32),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Column(
@@ -122,11 +129,21 @@ class MatchDetailScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    if (match.homeScorers.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      ...match.homeScorers.map((scorer) => Text(
+                        scorer,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 12, color: AppTheme.darkHeatherGrey),
+                      )),
+                    ],
                   ],
                 ),
               ),
-              Hero(
-                tag: 'score_${match.id}',
+              Padding(
+                padding: const EdgeInsets.only(top: 14),
+                child: Hero(
+                  tag: 'score_${match.id}',
                 child: Material(
                   color: Colors.transparent,
                   child: Container(
@@ -156,6 +173,7 @@ class MatchDetailScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              ),
               Expanded(
                 child: Column(
                   children: [
@@ -174,6 +192,14 @@ class MatchDetailScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    if (match.awayScorers.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      ...match.awayScorers.map((scorer) => Text(
+                        scorer,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 12, color: AppTheme.darkHeatherGrey),
+                      )),
+                    ],
                   ],
                 ),
               ),
@@ -181,12 +207,13 @@ class MatchDetailScreen extends StatelessWidget {
           ),
           const SizedBox(height: 40),
           _infoCard(Icons.stadium, 'Estadio', match.stadium ?? 'Por definir', 0),
-          _infoCard(Icons.access_time, 'Fecha y hora (local)', localTime, 1),
-          _infoCard(Icons.emoji_events, 'Fase', match.phase, 2),
+          if (match.stadiumCapacity != null)
+            _infoCard(Icons.people, 'Capacidad', '${NumberFormat.decimalPattern('es').format(match.stadiumCapacity)} espectadores', 1),
+          _infoCard(Icons.access_time, 'Fecha y hora (local)', localTime, 2),
+          _infoCard(Icons.emoji_events, 'Fase', match.phase, 3),
           if (match.group != null)
-            _infoCard(Icons.grid_view, 'Grupo', match.group!, 3),
+            _infoCard(Icons.grid_view, 'Grupo', match.group!, 4),
         ],
-      ),
       ),
     );
   }

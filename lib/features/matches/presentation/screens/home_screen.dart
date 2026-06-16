@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateTime(2026, 6, 11); // Fecha por defecto: Inauguración
+    _selectedDate = DateTime.now(); // Fecha por defecto: Día actual
     _matchesFuture = ServiceLocator.getMatchesByDate(_selectedDate);
   }
 
@@ -37,9 +37,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _pickDate() async {
+    // Si _selectedDate está fuera del rango del torneo, ajustamos la fecha inicial del DatePicker
+    DateTime validInitialDate = _selectedDate;
+    if (validInitialDate.isBefore(_tournamentStart)) {
+      validInitialDate = _tournamentStart;
+    } else if (validInitialDate.isAfter(_tournamentEnd)) {
+      validInitialDate = _tournamentEnd;
+    }
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: validInitialDate,
       firstDate: _tournamentStart,
       lastDate: _tournamentEnd,
       builder: (context, child) {
@@ -65,14 +73,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final dateStr = DateFormat('dd MMM yyyy', 'es').format(_selectedDate);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('FIFA Copa Mundial 2026', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: AppTheme.primaryGradient,
-          ),
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/wallpaper.png'),
+          fit: BoxFit.cover,
+          alignment: Alignment.topCenter,
         ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text('FIFA Copa Mundial 2026', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: AppTheme.primaryGradient,
+            ),
+          ),
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_today),
@@ -80,13 +97,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/wallpaper.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
+      body: SizedBox(
+        width: double.infinity,
+        height: double.infinity,
         child: Column(
         children: [
           Padding(
@@ -178,7 +191,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      ),
+    ),
+    ),
     );
   }
 }

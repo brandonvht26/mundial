@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'core/service_locator.dart';
@@ -8,7 +7,6 @@ import 'features/matches/presentation/screens/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env');
   await initializeDateFormatting('es');
   ServiceLocator.init();
   runApp(const WC26CalendarApp());

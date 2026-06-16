@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/service_locator.dart';
@@ -66,7 +67,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('WC26 Calendar'),
+        title: const Text('FIFA Copa Mundial 2026', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: AppTheme.primaryGradient,
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_today),
@@ -74,7 +80,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/wallpaper.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -155,13 +168,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (_) => MatchDetailScreen(matchId: match.id),
                         ),
                       ),
-                    );
+                    ).animate()
+                     .fade(duration: 400.ms, delay: (index * 100).ms)
+                     .slideY(begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOutQuad);
                   },
                 );
               },
             ),
           ),
         ],
+      ),
       ),
     );
   }

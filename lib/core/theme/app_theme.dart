@@ -7,16 +7,20 @@ class AppTheme {
   static const Color averageGreen = Color(0xFF3CAC3B);
   static const Color lightGray = Color(0xFFD1D4D1);
   static const Color darkHeatherGrey = Color(0xFF474A4A);
+  
+  // Colores extendidos para UI Premium
+  static const Color scaffoldBackground = Color(0xFFF5F7FA);
+  static const Color surfaceWhite = Colors.white;
 
   static ThemeData get lightTheme {
     return ThemeData(
       fontFamily: 'SNPro',
       primaryColor: hermesBlue,
-      scaffoldBackgroundColor: Colors.white,
+      scaffoldBackgroundColor: scaffoldBackground,
       colorScheme: const ColorScheme.light(
         primary: hermesBlue,
         secondary: torchRed,
-        surface: lightGray,
+        surface: surfaceWhite,
         error: torchRed,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
@@ -28,17 +32,33 @@ class AppTheme {
         centerTitle: true,
         elevation: 0,
       ),
-      cardTheme: const CardThemeData(
-        color: lightGray,
+      cardTheme: CardThemeData(
+        color: surfaceWhite,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: lightGray.withValues(alpha: 0.3), width: 1),
         ),
-        elevation: 4,
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        elevation: 8,
+        shadowColor: hermesBlue.withValues(alpha: 0.15),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       ),
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: torchRed,
       ),
     );
   }
+
+  // Gradiente global para headers o fondos especiales
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [hermesBlue, Color(0xFF1A235A)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  // Gradiente secundario (rojo) para elementos destacados como marcadores/VS
+  static const LinearGradient secondaryGradient = LinearGradient(
+    colors: [torchRed, Color(0xFFA11018)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
 }

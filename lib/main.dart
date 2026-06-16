@@ -20,7 +20,7 @@ class WC26CalendarApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'WC26 Calendar',
+      title: 'Calendario FIFA WC26',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       home: const HomeScreen(),

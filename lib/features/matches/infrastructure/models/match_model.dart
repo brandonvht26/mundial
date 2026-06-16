@@ -57,15 +57,22 @@ class MatchModel {
       return translated;
     }
 
+    final int matchId = json['matchNumber'] as int;
+    final String dateStr = (json['kickoffUtc'] as String).replaceAll(' ', 'T');
+    
+    int? homeGoals = json['homeTeamScore'] as int?;
+    int? awayGoals = json['awayTeamScore'] as int?;
+    String statusShort = json['statusShort'] as String? ?? 'NS';
+
     return MatchModel(
-      id: json['matchNumber'] as int,
-      date: (json['kickoffUtc'] as String).replaceAll(' ', 'T'),
+      id: matchId,
+      date: dateStr,
       stadium: json['stadium'] as String?,
-      statusShort: 'NS',
+      statusShort: statusShort,
       home: TeamModel(id: 0, name: translateTeamName(json['homeTeam'] as String)),
       away: TeamModel(id: 0, name: translateTeamName(json['awayTeam'] as String)),
-      homeGoals: json['homeTeamScore'] as int?,
-      awayGoals: json['awayTeamScore'] as int?,
+      homeGoals: homeGoals,
+      awayGoals: awayGoals,
       round: json['group'] as String? ?? json['stage'] as String? ?? 'Final Stage',
     );
   }

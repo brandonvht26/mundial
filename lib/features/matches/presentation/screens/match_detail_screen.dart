@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/service_locator.dart';
@@ -15,42 +16,55 @@ class MatchDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detalle del Partido'),
+        title: const Text('Detalle del Partido', style: TextStyle(fontWeight: FontWeight.bold)),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: AppTheme.primaryGradient,
+          ),
+        ),
       ),
-      body: FutureBuilder<Match>(
-        future: ServiceLocator.getMatchDetail(matchId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/wallpaper.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: FutureBuilder<Match>(
+          future: ServiceLocator.getMatchDetail(matchId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      color: AppTheme.torchRed,
-                      size: 48,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      snapshot.error.toString(),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.white70),
-                    ),
-                  ],
+            if (snapshot.hasError) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        color: AppTheme.torchRed,
+                        size: 48,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        snapshot.error.toString(),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: AppTheme.darkHeatherGrey),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }
+              );
+            }
 
-          final match = snapshot.data!;
-          return _buildDetail(context, match);
-        },
+            final match = snapshot.data!;
+            return _buildDetail(context, match);
+          },
+        ),
       ),
     );
   }
@@ -83,8 +97,8 @@ class MatchDetailScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               match.group!,
-              style: const TextStyle(color: Colors.white70, fontSize: 14),
-            ),
+              style: const TextStyle(color: AppTheme.darkHeatherGrey, fontSize: 15, fontWeight: FontWeight.w600),
+            ).animate().fade().slideY(begin: -0.2),
           ],
           const SizedBox(height: 32),
           Row(
@@ -103,7 +117,7 @@ class MatchDetailScreen extends StatelessWidget {
                       match.homeTeam.name,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Colors.black87,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -121,12 +135,12 @@ class MatchDetailScreen extends StatelessWidget {
                       vertical: 12,
                     ),
                     decoration: BoxDecoration(
-                      color: AppTheme.hermesBlue,
+                      gradient: AppTheme.secondaryGradient,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.hermesBlue.withValues(alpha: 0.4),
-                          blurRadius: 8,
+                          color: AppTheme.torchRed.withValues(alpha: 0.3),
+                          blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
                       ],
@@ -155,7 +169,7 @@ class MatchDetailScreen extends StatelessWidget {
                       match.awayTeam.name,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Colors.black87,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -166,28 +180,44 @@ class MatchDetailScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 40),
-          _infoCard(Icons.stadium, 'Estadio', match.stadium ?? 'Por definir'),
-          _infoCard(Icons.access_time, 'Fecha y hora (local)', localTime),
-          _infoCard(Icons.emoji_events, 'Fase', match.phase),
+          _infoCard(Icons.stadium, 'Estadio', match.stadium ?? 'Por definir', 0),
+          _infoCard(Icons.access_time, 'Fecha y hora (local)', localTime, 1),
+          _infoCard(Icons.emoji_events, 'Fase', match.phase, 2),
           if (match.group != null)
-            _infoCard(Icons.grid_view, 'Grupo', match.group!),
+            _infoCard(Icons.grid_view, 'Grupo', match.group!, 3),
         ],
+      ),
       ),
     );
   }
 
-  Widget _infoCard(IconData icon, String label, String value) {
+  Widget _infoCard(IconData icon, String label, String value, int delayIndex) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.lightGray,
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.lightGray.withValues(alpha: 0.5)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Icon(icon, color: AppTheme.hermesBlue, size: 24),
-          const SizedBox(width: 12),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppTheme.averageGreen.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: AppTheme.averageGreen, size: 24),
+          ),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,6 +242,6 @@ class MatchDetailScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ).animate().fade(duration: 400.ms, delay: (200 + delayIndex * 100).ms).slideX(begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOutQuad);
   }
 }

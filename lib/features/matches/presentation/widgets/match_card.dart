@@ -5,7 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/match.dart';
 import '../widgets/team_badge.dart';
 
-class MatchCard extends StatelessWidget {
+class MatchCard extends StatefulWidget {
   final Match match;
   final VoidCallback onTap;
 
@@ -16,25 +16,41 @@ class MatchCard extends StatelessWidget {
   });
 
   @override
+  State<MatchCard> createState() => _MatchCardState();
+}
+
+class _MatchCardState extends State<MatchCard> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 4,
-      shadowColor: Colors.black26,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 16),
-              _buildTeamsRow(),
-              const SizedBox(height: 12),
-              _buildFooter(),
-            ],
+    // Usamos AnimatedScale para el efecto de "resorte" al presionar
+    return AnimatedScale(
+      scale: _isPressed ? 0.96 : 1.0,
+      duration: const Duration(milliseconds: 150),
+      curve: Curves.easeOutCubic,
+      child: Card(
+        // CardTheme en AppTheme se encarga del color y elevación
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTapDown: (_) => setState(() => _isPressed = true),
+          onTapUp: (_) => setState(() => _isPressed = false),
+          onTapCancel: () => setState(() => _isPressed = false),
+          onTap: () {
+            widget.onTap();
+            setState(() => _isPressed = false);
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 16),
+                _buildTeamsRow(),
+                const SizedBox(height: 12),
+                _buildFooter(),
+              ],
+            ),
           ),
         ),
       ),
@@ -46,14 +62,14 @@ class MatchCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          match.phase,
+          widget.match.phase,
           style: const TextStyle(
             fontSize: 12,
             color: AppTheme.darkHeatherGrey,
             fontWeight: FontWeight.bold,
           ),
         ),
-        if (match.status.isLive)
+        if (widget.match.status.isLive)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
@@ -69,7 +85,7 @@ class MatchCard extends StatelessWidget {
               ),
             ),
           )
-        else if (match.status.isFinished)
+        else if (widget.match.status.isFinished)
           const Text(
             'Finalizado',
             style: TextStyle(fontSize: 12, color: AppTheme.darkHeatherGrey),
@@ -86,17 +102,18 @@ class MatchCard extends StatelessWidget {
           child: Column(
             children: [
               TeamBadge(
-                imageUrl: match.homeTeam.logoUrl,
-                size: 48,
-                tag: 'team_home_${match.id}',
+                imageUrl: widget.match.homeTeam.logoUrl,
+                size: 56,
+                tag: 'team_home_${widget.match.id}',
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Text(
-                match.homeTeam.shortName ?? match.homeTeam.name,
+                widget.match.homeTeam.name,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.hermesBlue,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -105,41 +122,49 @@ class MatchCard extends StatelessWidget {
           ),
         ),
         Hero(
-          tag: 'score_${match.id}',
+          tag: 'score_${widget.match.id}',
           child: Material(
             color: Colors.transparent,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: AppTheme.hermesBlue,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                match.scoreDisplay,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  gradient: AppTheme.secondaryGradient,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.torchRed.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  widget.match.scoreDisplay,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ),
           ),
         ),
         Expanded(
           child: Column(
             children: [
               TeamBadge(
-                imageUrl: match.awayTeam.logoUrl,
-                size: 48,
-                tag: 'team_away_${match.id}',
+                imageUrl: widget.match.awayTeam.logoUrl,
+                size: 56,
+                tag: 'team_away_${widget.match.id}',
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Text(
-                match.awayTeam.shortName ?? match.awayTeam.name,
+                widget.match.awayTeam.name,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.hermesBlue,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -153,7 +178,7 @@ class MatchCard extends StatelessWidget {
 
   Widget _buildFooter() {
     // Forzar siempre a la zona horaria de Ecuador (GMT-5) sin importar la configuración del dispositivo
-    final ecuadorTime = match.dateTime.toUtc().subtract(const Duration(hours: 5));
+    final ecuadorTime = widget.match.dateTime.toUtc().subtract(const Duration(hours: 5));
     final time = DateFormat('HH:mm').format(ecuadorTime);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -161,7 +186,7 @@ class MatchCard extends StatelessWidget {
         const Icon(Icons.stadium, size: 14, color: AppTheme.darkHeatherGrey),
         const SizedBox(width: 4),
         Text(
-          match.stadium ?? '',
+          widget.match.stadium ?? '',
           style: const TextStyle(fontSize: 12, color: AppTheme.darkHeatherGrey),
         ),
         const SizedBox(width: 12),

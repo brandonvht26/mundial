@@ -61,9 +61,8 @@ class MatchRepositoryImpl implements MatchRepository {
       }
       yield freshMatches;
     } catch (e) {
-      // Si forzamos actualización o no hay nada local para mostrar, mostrar error
-      if (forceRefresh || !hasYieldedLocal) {
-        rethrow;
+      if (!hasYieldedLocal) {
+        throw Exception('No pudimos conectar con el servidor para obtener los partidos. Por favor, verifica tu conexión a internet.');
       }
     }
   }
@@ -98,8 +97,8 @@ class MatchRepositoryImpl implements MatchRepository {
       }
       yield freshMatches;
     } catch (e) {
-      if (forceRefresh || !hasYieldedLocal) {
-        rethrow;
+      if (!hasYieldedLocal) {
+        throw Exception('No pudimos conectar con el servidor para obtener los partidos. Por favor, verifica tu conexión a internet.');
       }
     }
   }
@@ -114,15 +113,19 @@ class MatchRepositoryImpl implements MatchRepository {
       } catch (_) {}
     }
 
-    final rawGames = await _remoteDataSource.fetchRawGames();
-    final remoteModels = rawGames
-          .map((fixture) => MatchModel.fromJson(fixture as Map<String, dynamic>))
-          .toList();
-    final model = remoteModels.firstWhere(
-      (m) => m.id.toString() == matchId.toString(),
-      orElse: () => throw Exception('No se encontró el partido con id $matchId'),
-    );
-    return await _enrichAndMap(model);
+    try {
+      final rawGames = await _remoteDataSource.fetchRawGames();
+      final remoteModels = rawGames
+            .map((fixture) => MatchModel.fromJson(fixture as Map<String, dynamic>))
+            .toList();
+      final model = remoteModels.firstWhere(
+        (m) => m.id.toString() == matchId.toString(),
+        orElse: () => throw Exception('No se encontró el partido con id $matchId'),
+      );
+      return await _enrichAndMap(model);
+    } catch (e) {
+      throw Exception('No pudimos conectar con el servidor para obtener los detalles del partido. Por favor, verifica tu conexión a internet.');
+    }
   }
 
   Future<Match> _enrichAndMap(MatchModel model) async {

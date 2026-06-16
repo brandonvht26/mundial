@@ -221,23 +221,28 @@ class MatchDetailScreen extends StatelessWidget {
   Widget _infoCard(IconData icon, String label, String value, int delayIndex) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.lightGray.withValues(alpha: 0.5)),
+        gradient: AppTheme.goldGradient,
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 10,
-            offset: const Offset(0, 4),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(2),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: AppTheme.averageGreen.withValues(alpha: 0.1),
               shape: BoxShape.circle,
@@ -268,6 +273,7 @@ class MatchDetailScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     ).animate().fade(duration: 400.ms, delay: (200 + delayIndex * 100).ms).slideX(begin: 0.2, end: 0, duration: 400.ms, curve: Curves.easeOutQuad);
   }

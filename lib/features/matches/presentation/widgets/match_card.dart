@@ -29,27 +29,43 @@ class _MatchCardState extends State<MatchCard> {
       scale: _isPressed ? 0.96 : 1.0,
       duration: const Duration(milliseconds: 150),
       curve: Curves.easeOutCubic,
-      child: Card(
-        // CardTheme en AppTheme se encarga del color y elevación
-        child: InkWell(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          gradient: AppTheme.goldGradient,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(2), // Grosor del borde dorado
+        child: Material(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          onTapDown: (_) => setState(() => _isPressed = true),
-          onTapUp: (_) => setState(() => _isPressed = false),
-          onTapCancel: () => setState(() => _isPressed = false),
-          onTap: () {
-            widget.onTap();
-            setState(() => _isPressed = false);
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 16),
-                _buildTeamsRow(),
-                const SizedBox(height: 12),
-                _buildFooter(),
-              ],
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTapDown: (_) => setState(() => _isPressed = true),
+            onTapUp: (_) => setState(() => _isPressed = false),
+            onTapCancel: () => setState(() => _isPressed = false),
+            onTap: () {
+              widget.onTap();
+              setState(() => _isPressed = false);
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 16),
+                  _buildTeamsRow(),
+                  const SizedBox(height: 12),
+                  _buildFooter(),
+                ],
+              ),
             ),
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/api/dio_client.dart';
 import '../features/matches/domain/usecases/get_match_detail.dart';
 import '../features/matches/domain/usecases/get_matches_by_date.dart';
+import '../features/matches/domain/usecases/get_all_matches.dart';
 import '../features/matches/infrastructure/datasources/countries_remote_datasource.dart';
 import '../features/matches/infrastructure/datasources/football_remote_datasource.dart';
 import '../features/matches/infrastructure/datasources/football_local_datasource.dart';
@@ -15,6 +16,7 @@ class ServiceLocator {
   static late final LocalCountriesDataSource countriesDataSource;
   static late final MatchRepositoryImpl matchRepository;
   static late final GetMatchesByDate getMatchesByDate;
+  static late final GetAllMatches getAllMatches;
   static late final GetMatchDetail getMatchDetail;
 
   static Future<void> init() async {
@@ -32,6 +34,7 @@ class ServiceLocator {
     );
 
     getMatchesByDate = GetMatchesByDate(matchRepository);
+    getAllMatches = GetAllMatches(matchRepository);
     getMatchDetail = GetMatchDetail(matchRepository);
   }
 }

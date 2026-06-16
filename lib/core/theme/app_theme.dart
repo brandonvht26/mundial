@@ -61,4 +61,18 @@ class AppTheme {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
+
+  // Gradiente terciario (verde) para la tabla de grupos
+  static const LinearGradient tertiaryGradient = LinearGradient(
+    colors: [averageGreen, Color(0xFF227821)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  // Gradiente dorado (premium)
+  static const LinearGradient goldGradient = LinearGradient(
+    colors: [Color(0xFFFFDF00), Color(0xFFD4AF37), Color(0xFF996515)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
 }

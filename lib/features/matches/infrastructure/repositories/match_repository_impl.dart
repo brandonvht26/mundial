@@ -69,6 +69,42 @@ class MatchRepositoryImpl implements MatchRepository {
   }
 
   @override
+  Stream<List<Match>> getAllMatches({bool forceRefresh = false}) async* {
+    bool hasYieldedLocal = false;
+
+    if (!forceRefresh) {
+      final localModels = await _localDataSource.getCachedGames();
+      if (localModels != null && localModels.isNotEmpty) {
+        final matches = <Match>[];
+        for (final model in localModels) {
+          matches.add(await _enrichAndMap(model));
+        }
+        yield matches;
+        hasYieldedLocal = true;
+      }
+    }
+
+    try {
+      final rawGames = await _remoteDataSource.fetchRawGames();
+      await _localDataSource.cacheGames(rawGames);
+      
+      final remoteModels = rawGames
+          .map((fixture) => MatchModel.fromJson(fixture as Map<String, dynamic>))
+          .toList();
+      
+      final freshMatches = <Match>[];
+      for (final model in remoteModels) {
+        freshMatches.add(await _enrichAndMap(model));
+      }
+      yield freshMatches;
+    } catch (e) {
+      if (forceRefresh || !hasYieldedLocal) {
+        rethrow;
+      }
+    }
+  }
+
+  @override
   Future<Match> getMatchDetail(int matchId) async {
     final localModels = await _localDataSource.getCachedGames();
     if (localModels != null) {

@@ -23,9 +23,14 @@ Este archivo actúa como el índice y la **Constitución del directorio `.contex
 - Seguir la guía oficial de estilo de Dart (`flutter_lints`).
 - Interfaces de usuario regidas por el archivo `.context/skills/ui/SKILL.md` (Tipografía SNPro, paleta de colores del Mundial 2026).
 
-## 4. Gestión del Directorio `.context`
+## 4. Metadatos de la Aplicación
+- **Nombre de la App**: WC26 Calendar
+- **Ícono de la App**: `assets/icons/icon.png` (se adaptará a formato PNG para los launchers nativos de iOS y Android).
+
+## 5. Gestión del Directorio `.context`
 - `rules.md`: Constitución. Requiere autorización para modificar.
 - `architecture.md`: Inmutable en estructura. Requiere autorización para modificar.
 - `roadmap.md`: Volátil, planificable por el usuario.
 - `session.md`: Volátil, registro del progreso diario.
 - `skills/`: Contiene habilidades y patrones específicos (UI, alertas, AI).
+- `hu/`: Contiene el contexto detallado de las Historias de Usuario.

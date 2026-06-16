@@ -177,16 +177,18 @@ class MatchModel {
 
   String get phase {
     if (round.length == 1 || round.toLowerCase().startsWith('group')) {
-      return 'Fase de Grupos';
+      final g = group ?? '';
+      return 'Fase de $g'; // Ej: "Fase de Grupo E"
     }
     
-    // Traducir fases eliminatorias
-    if (round.toLowerCase().contains('round-of-32')) return 'Dieciseisavos de Final';
-    if (round.toLowerCase().contains('round-of-16')) return 'Octavos de Final';
-    if (round.toLowerCase().contains('quarter-final') || round.toLowerCase().contains('quarterfinal')) return 'Cuartos de Final';
-    if (round.toLowerCase().contains('semi-final') || round.toLowerCase().contains('semifinal')) return 'Semifinal';
-    if (round.toLowerCase().contains('third-place')) return 'Tercer Lugar';
-    if (round.toLowerCase().contains('final')) return 'Final';
+    // Traducir fases eliminatorias según abreviaturas de la API
+    final r = round.toUpperCase();
+    if (r == 'R32' || r.contains('ROUND-OF-32')) return 'Dieciseisavos de Final';
+    if (r == 'R16' || r.contains('ROUND-OF-16')) return 'Octavos de Final';
+    if (r == 'QF' || r.contains('QUARTER')) return 'Cuartos de Final';
+    if (r == 'SF' || r.contains('SEMI')) return 'Semifinal';
+    if (r == '3RD' || r.contains('THIRD')) return 'Tercer Lugar';
+    if (r == 'FINAL') return 'Gran Final';
 
     return 'Fase Eliminatoria';
   }

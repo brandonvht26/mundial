@@ -1,36 +1,29 @@
-# Reglas de Oro del Proyecto (Rules)
+# Reglas del Proyecto (Rules)
 
-Este archivo actúa como el índice y la **Constitución del directorio `.context`**. Las reglas aquí definidas mandan sobre los demás archivos. 
+Este archivo actúa como la constitución del proyecto y define las reglas de oro. **ESTE ARCHIVO SOLO PUEDE SER MODIFICADO CON LA AUTORIZACIÓN EXPLÍCITA DEL USUARIO**.
 
-> [!CAUTION]
-> **ESTE ARCHIVO SOLO PUEDE MODIFICARSE O ELIMINARSE SI EL USUARIO DA LA AUTORIZACIÓN EXPRESA.**
+## Stack Tecnológico
+- **Framework:** Flutter
+- **Lenguaje:** Dart
+- **Dependencias Principales:** 
+  - `dio` (Cliente HTTP)
+  - `google_fonts` (Tipografías)
+  - `intl` (Internacionalización y manejo de fechas)
+  - `flutter_animate` (Animaciones de UI)
+  - `cached_network_image` / `flutter_svg` (Manejo de imágenes)
 
-## 1. Stack Tecnológico
-- **Framework Core**: Flutter
-- **Lenguaje de Programación**: Dart
-- **Cliente HTTP**: Dio
-- **Manejo de Estado Asíncrono**: `FutureBuilder` (Nativo)
-- **Gestión de Entorno**: `flutter_dotenv`
-- **Manejo de Fechas**: `intl`
-- **Manejo de Imágenes/Vectores**: `cached_network_image`, `flutter_svg`
+## Patrones y Arquitectura
+- **Arquitectura:** Clean Architecture (Domain, Infrastructure, Presentation) orientada a Features (Feature-First).
+- **Inyección de Dependencias:** Implementación propia de Service Locator (`core/service_locator.dart`), sin uso de librerías externas como `get_it`.
+- **Manejo del Estado:** Uso nativo de Flutter mediante `StatefulWidget`, `setState` y `FutureBuilder` para asincronía.
 
-## 2. Idioma y Nomenclatura
-- **Código Fuente**: Inglés (Nombres de clases, variables, métodos, archivos).
-- **Documentación y Comentarios**: Español.
-- **Commits**: Español (siguiendo convenciones de Conventional Commits si aplica).
+## Guías de Estilo y Lenguaje
+- **Código Fuente:** Nombres de variables, clases, métodos y archivos deben estar en **Inglés**.
+- **Interfaz de Usuario (UI):** Todos los textos visibles para el usuario deben estar en **Español** (ej. "Calendario FIFA WC26").
+- **Documentación y Contexto (.context):** Debe mantenerse en **Español**.
+- **Estilo de Código:** Seguir las reglas de `flutter_lints`.
 
-## 3. Guías de Estilo
-- Seguir la guía oficial de estilo de Dart (`flutter_lints`).
-- Interfaces de usuario regidas por el archivo `.context/skills/ui/SKILL.md` (Tipografía SNPro, paleta de colores del Mundial 2026).
-
-## 4. Metadatos de la Aplicación
-- **Nombre de la App**: WC26 Calendar
-- **Ícono de la App**: `assets/icons/icon.png` (se adaptará a formato PNG para los launchers nativos de iOS y Android).
-
-## 5. Gestión del Directorio `.context`
-- `rules.md`: Constitución. Requiere autorización para modificar.
-- `architecture.md`: Inmutable en estructura. Requiere autorización para modificar.
-- `roadmap.md`: Volátil, planificable por el usuario.
-- `session.md`: Volátil, registro del progreso diario.
-- `skills/`: Contiene habilidades y patrones específicos (UI, alertas, AI).
-- `hu/`: Contiene el contexto detallado de las Historias de Usuario.
+## Relación con otros archivos de contexto
+- `architecture.md`: Manda sobre la estructura técnica. No debe contradecir a `rules.md`.
+- `roadmap.md` y `session.md`: Archivos volátiles para gestión y seguimiento.
+- `skills/`: Patrones de diseño y comportamiento específico.

@@ -6,5 +6,6 @@ class GetMatchesByDate {
 
   const GetMatchesByDate(this._repository);
 
-  Future<List<Match>> call(DateTime date) => _repository.getMatchesByDate(date);
+  Stream<List<Match>> call(DateTime date, {bool forceRefresh = false}) => 
+      _repository.getMatchesByDate(date, forceRefresh: forceRefresh);
 }

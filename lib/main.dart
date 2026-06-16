@@ -8,7 +8,7 @@ import 'features/matches/presentation/screens/home_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('es');
-  ServiceLocator.init();
+  await ServiceLocator.init();
   runApp(const WC26CalendarApp());
 }
 

@@ -1,41 +1,27 @@
 # Arquitectura del Proyecto
 
-> [!CAUTION]
-> **Este archivo no puede eliminarse ni actualizarse sin autorización.** Describe la arquitectura estricta que sigue el proyecto para evitar la invención de estructuras o flujos raros por parte de los colaboradores o modelos de IA.
+**ESTE ARCHIVO NO PUEDE ELIMINARSE NI ACTUALIZARSE SIN AUTORIZACIÓN DEL USUARIO.** Describe rigurosamente la estructura y flujo de la aplicación.
 
-## Patrón Arquitectónico
-El proyecto sigue **Clean Architecture con Vertical Slicing**. Esto significa que en lugar de organizar el código por capas técnicas en la raíz, se organiza por **Funcionalidades (Features)**.
+## Clean Architecture + Feature-First
 
-## Estructura de Directorios
+El proyecto divide la lógica en `core` (utilidades compartidas) y `features` (módulos funcionales, ej. `matches`).
 
-La estructura base del directorio `lib/` debe ser rigurosamente la siguiente:
+### 1. Capa de Dominio (`domain`)
+- **Entities:** Clases puras de Dart que representan los objetos de negocio (ej. `Match`).
+- **Use Cases:** Casos de uso específicos de la aplicación (ej. `GetMatchesByDate`, `GetMatchDetail`).
+- **Repositories (Interfaces):** Contratos que definen cómo se obtendrán los datos.
 
-```text
-lib/
-├── features/
-│   └── [nombre_del_feature]/ (Ej. matches)
-│       ├── domain/
-│       │   ├── entities/        # Objetos de negocio puros (independientes de Flutter/APIs)
-│       │   ├── repositories/    # Interfaces de contratos (abstract classes)
-│       │   └── usecases/        # Casos de uso de la aplicación
-│       ├── infrastructure/
-│       │   ├── datasources/     # Consumo de APIs (API-Football, REST Countries)
-│       │   ├── models/          # DTOs (Data Transfer Objects) con métodos fromJson/toJson
-│       │   └── repositories/    # Implementación de los contratos del dominio
-│       └── presentation/
-│           ├── screens/         # Pantallas principales (Flutter Widgets)
-│           ├── widgets/         # Componentes UI reutilizables dentro del feature
-│           └── providers/       # (Si aplicara) Lógica de estado específica del feature
-└── shared/ (o core/)
-    ├── api/                     # Configuración de clientes (DioClient, interceptores)
-    ├── theme/                   # Configuración de colores y tipografía global
-    ├── utils/                   # Funciones utilitarias (formateo de fechas, etc)
-    └── widgets/                 # Widgets globales que se usan en más de un feature
-```
+### 2. Capa de Infraestructura (`infrastructure`)
+- **DataSources:** Fuentes de datos.
+  - *Remote:* Se usa `Dio` para llamadas a API (ej. `FootballRemoteDataSource`).
+  - *Local:* Fuentes locales (ej. `LocalCountriesDataSource`).
+- **Repositories (Implementations):** Implementación de los contratos definidos en `domain` (ej. `MatchRepositoryImpl`), que orquestan los `DataSources`.
+- **Models/Mappers:** Modelos de datos para mapear JSON a Entities.
 
-## Flujo de Datos
-1. La **Presentation** (UI) solicita datos llamando a un **UseCase**.
-2. El **UseCase** delega la obtención de la información a un **Repository** (interfaz en *domain*).
-3. La implementación del **Repository** (en *infrastructure*) decide si llama a un o varios **DataSources** (ej. remote API).
-4. El **DataSource** devuelve un **Model** (infrastructure) que el Repositorio mapea a una **Entity** (domain) pura.
-5. La **Entity** es enviada de regreso a la UI, la cual se actualiza de forma reactiva (ej. `FutureBuilder`).
+### 3. Capa de Presentación (`presentation`)
+- **Screens:** Widgets principales de la pantalla (ej. `HomeScreen`, `MatchDetailScreen`).
+- **Widgets:** Componentes visuales reutilizables (ej. `MatchCard`).
+- **State Management:** No se utiliza BLoC, Provider ni Riverpod. El estado efímero se maneja con `StatefulWidget` y las peticiones de datos se resuelven visualmente usando `FutureBuilder`.
+
+## Inyección de Dependencias (DI)
+Se maneja a través de un patrón *Service Locator* personalizado implementado en `lib/core/service_locator.dart`. La inicialización ocurre en `main.dart` antes de `runApp()`.

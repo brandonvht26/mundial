@@ -1,6 +1,6 @@
 import '../entities/match.dart';
 
 abstract class MatchRepository {
-  Future<List<Match>> getMatchesByDate(DateTime date);
+  Stream<List<Match>> getMatchesByDate(DateTime date, {bool forceRefresh = false});
   Future<Match> getMatchDetail(int matchId);
 }

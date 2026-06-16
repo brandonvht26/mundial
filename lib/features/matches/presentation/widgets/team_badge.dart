@@ -32,8 +32,8 @@ class TeamBadge extends StatelessWidget {
         imageUrl: imageUrl!,
         width: size,
         height: size,
-        placeholder: (_, __) => _placeholder(),
-        errorWidget: (_, __, ___) => _placeholder(),
+        placeholder: (context, url) => _placeholder(),
+        errorWidget: (context, url, error) => _placeholder(),
       );
     }
 

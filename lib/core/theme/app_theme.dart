@@ -12,7 +12,7 @@ class AppTheme {
     return ThemeData(
       fontFamily: 'SNPro',
       primaryColor: hermesBlue,
-      scaffoldBackgroundColor: darkHeatherGrey,
+      scaffoldBackgroundColor: Colors.white,
       colorScheme: const ColorScheme.light(
         primary: hermesBlue,
         secondary: torchRed,
@@ -28,13 +28,13 @@ class AppTheme {
         centerTitle: true,
         elevation: 0,
       ),
-      cardTheme: CardTheme(
+      cardTheme: const CardThemeData(
         color: lightGray,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
         elevation: 4,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: torchRed,

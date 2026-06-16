@@ -152,7 +152,9 @@ class MatchCard extends StatelessWidget {
   }
 
   Widget _buildFooter() {
-    final time = DateFormat('HH:mm').format(match.dateTime.toLocal());
+    // Forzar siempre a la zona horaria de Ecuador (GMT-5) sin importar la configuración del dispositivo
+    final ecuadorTime = match.dateTime.toUtc().subtract(const Duration(hours: 5));
+    final time = DateFormat('HH:mm').format(ecuadorTime);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

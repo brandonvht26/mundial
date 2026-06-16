@@ -56,8 +56,9 @@ class MatchDetailScreen extends StatelessWidget {
   }
 
   Widget _buildDetail(BuildContext context, Match match) {
+    final ecuadorTime = match.dateTime.toUtc().subtract(const Duration(hours: 5));
     final localTime = DateFormat('dd MMM yyyy - HH:mm', 'es')
-        .format(match.dateTime.toLocal());
+        .format(ecuadorTime);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -124,7 +125,7 @@ class MatchDetailScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.hermesBlue.withOpacity(0.4),
+                          color: AppTheme.hermesBlue.withValues(alpha: 0.4),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),

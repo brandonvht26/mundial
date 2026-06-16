@@ -26,23 +26,47 @@ class MatchModel {
   });
 
   factory MatchModel.fromJson(Map<String, dynamic> json) {
-    final fixture = json['fixture'] as Map<String, dynamic>;
-    final league = json['league'] as Map<String, dynamic>;
-    final teams = json['teams'] as Map<String, dynamic>;
-    final goals = json['goals'] as Map<String, dynamic>?;
-    final venue = fixture['venue'] as Map<String, dynamic>?;
-    final status = fixture['status'] as Map<String, dynamic>;
+    String translateTeamName(String name) {
+      if (name == 'TBD') return 'Por Definir';
+      String translated = name;
+      
+      // Mapear "Group X winners" a "Ganador Grupo X"
+      translated = translated.replaceAllMapped(
+        RegExp(r'Group ([A-L]) winners', caseSensitive: false),
+        (match) => 'Ganador Grupo ${match.group(1)}',
+      );
+      
+      // Mapear "Group X runners-up" a "Segundo Grupo X"
+      translated = translated.replaceAllMapped(
+        RegExp(r'Group ([A-L]) runners-up', caseSensitive: false),
+        (match) => 'Segundo Grupo ${match.group(1)}',
+      );
+      
+      // Mapear "Group X/Y/Z third place" a "3ro Grupo X/Y/Z"
+      translated = translated.replaceAllMapped(
+        RegExp(r'Group ([\w/]+) third place', caseSensitive: false),
+        (match) => '3ro Grupo ${match.group(1)}',
+      );
+      
+      translated = translated.replaceAll('Winner Match', 'Ganador Partido');
+      translated = translated.replaceAll('Loser Match', 'Perdedor Partido');
+      translated = translated.replaceAll('Group', 'Grupo');
+      translated = translated.replaceAll('winners', 'Ganador');
+      translated = translated.replaceAll('runners-up', 'Segundo');
+      translated = translated.replaceAll('third place', 'Tercer Lugar');
+      return translated;
+    }
 
     return MatchModel(
-      id: fixture['id'] as int,
-      date: fixture['date'] as String,
-      stadium: venue?['name'] as String?,
-      statusShort: status['short'] as String,
-      home: TeamModel.fromJson(teams['home'] as Map<String, dynamic>),
-      away: TeamModel.fromJson(teams['away'] as Map<String, dynamic>),
-      homeGoals: goals?['home'] as int?,
-      awayGoals: goals?['away'] as int?,
-      round: league['round'] as String,
+      id: json['matchNumber'] as int,
+      date: (json['kickoffUtc'] as String).replaceAll(' ', 'T'),
+      stadium: json['stadium'] as String?,
+      statusShort: 'NS',
+      home: TeamModel(id: 0, name: translateTeamName(json['homeTeam'] as String)),
+      away: TeamModel(id: 0, name: translateTeamName(json['awayTeam'] as String)),
+      homeGoals: json['homeTeamScore'] as int?,
+      awayGoals: json['awayTeamScore'] as int?,
+      round: json['group'] as String? ?? json['stage'] as String? ?? 'Final Stage',
     );
   }
 
@@ -72,25 +96,47 @@ class MatchModel {
   }
 
   String? get group {
-    final lower = round.toLowerCase();
-    return lower.startsWith('group') ? round : null;
+    if (round.length == 1) { // "A", "B", etc
+      return 'Grupo $round';
+    }
+    if (round.toLowerCase().startsWith('group')) {
+      return round; 
+    }
+    return null;
   }
 
   String get phase {
-    final lower = round.toLowerCase();
-    return lower.startsWith('group') ? 'Group Stage' : round;
+    if (round.length == 1 || round.toLowerCase().startsWith('group')) {
+      return 'Fase de Grupos';
+    }
+    
+    // Traducir fases eliminatorias
+    if (round.toLowerCase().contains('round-of-32')) return 'Dieciseisavos de Final';
+    if (round.toLowerCase().contains('round-of-16')) return 'Octavos de Final';
+    if (round.toLowerCase().contains('quarter-final') || round.toLowerCase().contains('quarterfinal')) return 'Cuartos de Final';
+    if (round.toLowerCase().contains('semi-final') || round.toLowerCase().contains('semifinal')) return 'Semifinal';
+    if (round.toLowerCase().contains('third-place')) return 'Tercer Lugar';
+    if (round.toLowerCase().contains('final')) return 'Final';
+
+    return 'Fase Eliminatoria';
   }
 
   Match toEntity({
     String? homeFlagUrl,
     String? awayFlagUrl,
-    String? homeShortName,
-    String? awayShortName,
+    String? homeTranslatedName,
+    String? awayTranslatedName,
   }) {
     return Match(
       id: id,
-      homeTeam: home.toEntity(flagUrl: homeFlagUrl, shortName: homeShortName),
-      awayTeam: away.toEntity(flagUrl: awayFlagUrl, shortName: awayShortName),
+      homeTeam: home.toEntity(
+        flagUrl: homeFlagUrl,
+        translatedName: homeTranslatedName,
+      ),
+      awayTeam: away.toEntity(
+        flagUrl: awayFlagUrl,
+        translatedName: awayTranslatedName,
+      ),
       homeScore: homeGoals,
       awayScore: awayGoals,
       status: matchStatus,

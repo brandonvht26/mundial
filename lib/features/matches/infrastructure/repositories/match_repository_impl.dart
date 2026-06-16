@@ -1,13 +1,13 @@
 import '../../domain/entities/match.dart';
 import '../../domain/repositories/match_repository.dart';
 import '../datasources/countries_remote_datasource.dart';
+import '../datasources/country_codes.dart';
 import '../datasources/football_remote_datasource.dart';
-import '../models/country_model.dart';
 import '../models/match_model.dart';
 
 class MatchRepositoryImpl implements MatchRepository {
   final FootballRemoteDataSource _footballDataSource;
-  final CountriesRemoteDataSource _countriesDataSource;
+  final LocalCountriesDataSource _countriesDataSource;
 
   const MatchRepositoryImpl(
     this._footballDataSource,
@@ -34,19 +34,14 @@ class MatchRepositoryImpl implements MatchRepository {
   }
 
   Future<Match> _enrichAndMap(MatchModel model) async {
-    final countries = await Future.wait<CountryModel?>([
-      _countriesDataSource.getCountryByName(model.home.name),
-      _countriesDataSource.getCountryByName(model.away.name),
-    ]);
-
-    final homeCountry = countries[0];
-    final awayCountry = countries[1];
+    final homeFlag = await _countriesDataSource.getFlagSvgByCountryName(model.home.name);
+    final awayFlag = await _countriesDataSource.getFlagSvgByCountryName(model.away.name);
 
     return model.toEntity(
-      homeFlagUrl: homeCountry?.flagSvg,
-      awayFlagUrl: awayCountry?.flagSvg,
-      homeShortName: homeCountry?.fifaCode,
-      awayShortName: awayCountry?.fifaCode,
+      homeFlagUrl: homeFlag,
+      awayFlagUrl: awayFlag,
+      homeTranslatedName: CountryCodes.getSpanishName(model.home.name),
+      awayTranslatedName: CountryCodes.getSpanishName(model.away.name),
     );
   }
 }

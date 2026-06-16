@@ -1,5 +1,3 @@
-import 'package:dio/dio.dart';
-
 import '../core/api/dio_client.dart';
 import '../features/matches/domain/usecases/get_match_detail.dart';
 import '../features/matches/domain/usecases/get_matches_by_date.dart';
@@ -10,7 +8,7 @@ import '../features/matches/infrastructure/repositories/match_repository_impl.da
 class ServiceLocator {
   static late final DioClient dioClient;
   static late final FootballRemoteDataSource footballDataSource;
-  static late final CountriesRemoteDataSource countriesDataSource;
+  static late final LocalCountriesDataSource countriesDataSource;
   static late final MatchRepositoryImpl matchRepository;
   static late final GetMatchesByDate getMatchesByDate;
   static late final GetMatchDetail getMatchDetail;
@@ -19,7 +17,7 @@ class ServiceLocator {
     dioClient = DioClient();
 
     footballDataSource = FootballRemoteDataSource(dioClient);
-    countriesDataSource = CountriesRemoteDataSource(Dio());
+    countriesDataSource = const LocalCountriesDataSource();
 
     matchRepository = MatchRepositoryImpl(
       footballDataSource,

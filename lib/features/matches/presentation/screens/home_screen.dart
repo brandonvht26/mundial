@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateTime.now();
+    _selectedDate = DateTime(2026, 6, 11); // Fecha por defecto: Inauguración
     _matchesFuture = ServiceLocator.getMatchesByDate(_selectedDate);
   }
 
@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Text(
               dateStr,
               style: const TextStyle(
-                color: Colors.white70,
+                color: AppTheme.darkHeatherGrey,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -114,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             snapshot.error.toString(),
                             textAlign: TextAlign.center,
                             style: const TextStyle(
-                              color: Colors.white70,
+                              color: AppTheme.darkHeatherGrey,
                               fontSize: 14,
                             ),
                           ),
@@ -134,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         'No hay partidos del Mundial en esta fecha',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: AppTheme.darkHeatherGrey,
                           fontSize: 16,
                         ),
                       ),

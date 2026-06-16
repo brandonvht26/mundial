@@ -1,0 +1,61 @@
+class CountryCodes {
+  // Mapeo original en inglés de TheStatsAPI a código ISO y nombre en español
+  static const Map<String, Map<String, String>> _countryData = {
+    'Mexico': {'iso': 'mx', 'es': 'México'},
+    'South Africa': {'iso': 'za', 'es': 'Sudáfrica'},
+    'Korea Republic': {'iso': 'kr', 'es': 'Corea del Sur'},
+    'Czechia': {'iso': 'cz', 'es': 'República Checa'},
+    'Canada': {'iso': 'ca', 'es': 'Canadá'},
+    'Bosnia and Herzegovina': {'iso': 'ba', 'es': 'Bosnia y Herzegovina'},
+    'United States': {'iso': 'us', 'es': 'Estados Unidos'},
+    'Paraguay': {'iso': 'py', 'es': 'Paraguay'},
+    'Haiti': {'iso': 'ht', 'es': 'Haití'},
+    'Scotland': {'iso': 'gb-sct', 'es': 'Escocia'},
+    'Australia': {'iso': 'au', 'es': 'Australia'},
+    'Turkiye': {'iso': 'tr', 'es': 'Turquía'},
+    'Brazil': {'iso': 'br', 'es': 'Brasil'},
+    'Morocco': {'iso': 'ma', 'es': 'Marruecos'},
+    'Qatar': {'iso': 'qa', 'es': 'Qatar'},
+    'Switzerland': {'iso': 'ch', 'es': 'Suiza'},
+    "Cote d'Ivoire": {'iso': 'ci', 'es': 'Costa de Marfil'},
+    'Ecuador': {'iso': 'ec', 'es': 'Ecuador'},
+    'Germany': {'iso': 'de', 'es': 'Alemania'},
+    'Curacao': {'iso': 'cw', 'es': 'Curazao'},
+    'Netherlands': {'iso': 'nl', 'es': 'Países Bajos'},
+    'Japan': {'iso': 'jp', 'es': 'Japón'},
+    'Sweden': {'iso': 'se', 'es': 'Suecia'},
+    'Tunisia': {'iso': 'tn', 'es': 'Túnez'},
+    'Saudi Arabia': {'iso': 'sa', 'es': 'Arabia Saudita'},
+    'Uruguay': {'iso': 'uy', 'es': 'Uruguay'},
+    'Spain': {'iso': 'es', 'es': 'España'},
+    'Cabo Verde': {'iso': 'cv', 'es': 'Cabo Verde'},
+    'IR Iran': {'iso': 'ir', 'es': 'Irán'},
+    'New Zealand': {'iso': 'nz', 'es': 'Nueva Zelanda'},
+    'Belgium': {'iso': 'be', 'es': 'Bélgica'},
+    'Egypt': {'iso': 'eg', 'es': 'Egipto'},
+    'France': {'iso': 'fr', 'es': 'Francia'},
+    'Senegal': {'iso': 'sn', 'es': 'Senegal'},
+    'Iraq': {'iso': 'iq', 'es': 'Irak'},
+    'Norway': {'iso': 'no', 'es': 'Noruega'},
+    'Argentina': {'iso': 'ar', 'es': 'Argentina'},
+    'Algeria': {'iso': 'dz', 'es': 'Argelia'},
+    'Austria': {'iso': 'at', 'es': 'Austria'},
+    'Jordan': {'iso': 'jo', 'es': 'Jordania'},
+    'Ghana': {'iso': 'gh', 'es': 'Ghana'},
+    'Panama': {'iso': 'pa', 'es': 'Panamá'},
+    'England': {'iso': 'gb-eng', 'es': 'Inglaterra'},
+    'Croatia': {'iso': 'hr', 'es': 'Croacia'},
+    'Portugal': {'iso': 'pt', 'es': 'Portugal'},
+    'Congo DR': {'iso': 'cd', 'es': 'R.D. Congo'},
+    'Uzbekistan': {'iso': 'uz', 'es': 'Uzbekistán'},
+    'Colombia': {'iso': 'co', 'es': 'Colombia'},
+  };
+
+  static String? getIsoCode(String englishName) {
+    return _countryData[englishName]?['iso'];
+  }
+
+  static String getSpanishName(String englishName) {
+    return _countryData[englishName]?['es'] ?? englishName;
+  }
+}

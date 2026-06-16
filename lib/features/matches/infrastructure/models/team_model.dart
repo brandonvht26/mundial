@@ -19,11 +19,12 @@ class TeamModel {
     );
   }
 
-  Team toEntity({String? flagUrl, String? shortName}) {
+  Team toEntity({String? flagUrl, String? translatedName}) {
+    final finalName = translatedName ?? name;
     return Team(
       id: id,
-      name: name,
-      shortName: shortName,
+      name: finalName,
+      shortName: finalName.substring(0, finalName.length < 3 ? finalName.length : 3).toUpperCase(),
       logoUrl: flagUrl ?? logo,
     );
   }

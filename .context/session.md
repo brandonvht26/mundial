@@ -3,7 +3,7 @@
 > [!NOTE]
 > Archivo volátil. Se reescribe con todo lo trabajado en la jornada.
 
-## Progreso de la Jornada (Fase 1: Capa de Dominio - COMPLETADA)
+## Progreso de la Jornada
 
 ### Configuración Base (Sesión Anterior)
 - Se configuró el archivo `pubspec.yaml` añadiendo las dependencias requeridas (`dio`, `flutter_dotenv`, `intl`, `cached_network_image`, `flutter_svg`).
@@ -13,29 +13,55 @@
 - Se estableció el documento base `.context/skills/ui/SKILL.md` con los colores y directrices de animación.
 - Se estructuró el directorio `.context` conformando sus 4 pilares constitucionales.
 
-### Fase 1: Capa de Dominio (Actual)
+### Fase 1: Capa de Dominio (Completada)
 
-#### Archivos Creados
+**Entities creadas:**
+- `lib/features/matches/domain/entities/match_status.dart` — Enum `MatchStatus`.
+- `lib/features/matches/domain/entities/team.dart` — Entidad `Team`.
+- `lib/features/matches/domain/entities/country.dart` — Entidad `Country`.
+- `lib/features/matches/domain/entities/match.dart` — Entidad `Match` con getter `scoreDisplay`.
 
-**Entities:**
-- `lib/features/matches/domain/entities/match_status.dart` — Enum `MatchStatus` con valores: `scheduled`, `live`, `finished`, `unknown`. Incluye getters `isLive`, `isFinished`, `isScheduled`.
-- `lib/features/matches/domain/entities/team.dart` — Clase `Team` con atributos: `id` (int), `name` (String), `shortName` (String?), `logoUrl` (String?). Inmutable con `const`, equality por `id`.
-- `lib/features/matches/domain/entities/country.dart` — Clase `Country` con atributos: `name` (String), `flagUrl` (String?), `fifaCode` (String?). Inmutable con `const`, equality por `name`.
-- `lib/features/matches/domain/entities/match.dart` — Clase `Match` con atributos: `id` (int), `homeTeam` (Team), `awayTeam` (Team), `homeScore` (int?), `awayScore` (int?), `status` (MatchStatus), `dateTime` (DateTime), `stadium` (String?), `group` (String?), `phase` (String). Incluye getter `scoreDisplay` que retorna `'vs'` para partidos no iniciados o el marcador `'X - Y'`. Inmutable con `const`, equality por `id`.
+**Repositories / UseCases:**
+- `lib/features/matches/domain/repositories/match_repository.dart` — Interfaz `MatchRepository`.
+- `lib/features/matches/domain/usecases/get_matches_by_date.dart` — `GetMatchesByDate`.
+- `lib/features/matches/domain/usecases/get_match_detail.dart` — `GetMatchDetail`.
 
-**Repositories (Interfaces):**
-- `lib/features/matches/domain/repositories/match_repository.dart` — Clase abstracta `MatchRepository` con dos métodos:
-  - `Future<List<Match>> getMatchesByDate(DateTime date)` — Obtiene partidos por fecha.
-  - `Future<Match> getMatchDetail(int matchId)` — Obtiene el detalle de un partido específico.
+### Fase 2: Capa de Infraestructura (Actual — COMPLETADA)
 
-**Use Cases:**
-- `lib/features/matches/domain/usecases/get_matches_by_date.dart` — Clase `GetMatchesByDate` que recibe `MatchRepository` por inyección y expone `call(DateTime date)`.
-- `lib/features/matches/domain/usecases/get_match_detail.dart` — Clase `GetMatchDetail` que recibe `MatchRepository` por inyección y expone `call(int matchId)`.
+**Models (DTOs):**
+- `lib/features/matches/infrastructure/models/team_model.dart` — `TeamModel` con `fromJson` y `toEntity({flagUrl, shortName})`.
+- `lib/features/matches/infrastructure/models/country_model.dart` — `CountryModel` con `fromJson` y `toEntity()`, mapea respuesta de REST Countries.
+- `lib/features/matches/infrastructure/models/match_model.dart` — `MatchModel` con:
+  - `fromJson` para payload de API-Football (`fixture`, `league`, `teams`, `goals`, `venue`, `status`).
+  - Mapeo de `statusShort` a `MatchStatus` (`scheduled`, `live`, `finished`, `unknown`).
+  - Derivación de `group` y `phase` a partir del campo `round` (grupos vs eliminatorias).
+  - `toEntity({homeFlagUrl, awayFlagUrl, homeShortName, awayShortName})`.
+
+**DataSources:**
+- `lib/features/matches/infrastructure/datasources/football_remote_datasource.dart` — `FootballRemoteDataSource`:
+  - Usa `DioClient` inyectado.
+  - `getFixturesByDate(DateTime date)` → endpoint `/fixtures` filtrando por `date`, `league=1`, `season=2026`.
+  - `getFixtureById(int id)` → endpoint `/fixtures` filtrando por `id`.
+  - Maneja errores `DioException` lanzando `Exception` descriptivo.
+- `lib/features/matches/infrastructure/datasources/countries_remote_datasource.dart` — `CountriesRemoteDataSource`:
+  - Usa un `Dio` inyectado (independiente de API-Football).
+  - Consume `https://restcountries.com/v3.1/name/{countryName}` con `fields=flags,name,fifa`.
+  - `getCountryByName(name)` devuelve `CountryModel?`.
+  - `getFlagSvgByCountryName(name, {fallbackName})` devuelve la URL SVG o `null` si falla.
+
+**Repository Implementation:**
+- `lib/features/matches/infrastructure/repositories/match_repository_impl.dart` — `MatchRepositoryImpl`:
+  - Implementa `MatchRepository`.
+  - Inyecta `FootballRemoteDataSource` y `CountriesRemoteDataSource`.
+  - En `getMatchesByDate` y `getMatchDetail`:
+    1. Obtiene el/los `MatchModel` desde API-Football.
+    2. Consulta REST Countries en paralelo para ambos equipos (bandera SVG + código FIFA).
+    3. Mapea a la entidad pura `Match` usando `toEntity`.
+  - La capa de dominio **no fue modificada**.
 
 ### Cobertura de Historias de Usuario
-- **HU-01 (Ver partidos del día actual):** Cubierta por `GetMatchesByDate` + `Match` + `Team` + `MatchStatus`.
-- **HU-02 (Filtrar partidos por fecha):** Cubierta por `GetMatchesByDate` con parámetro `DateTime`.
-- **HU-03 (Ver detalle de un partido):** Cubierta por `GetMatchDetail` + `Match` con todos sus atributos (stadium, group, phase, dateTime, scoreDisplay).
+- **HU-01 / HU-02:** `getMatchesByDate(DateTime)` + modelos + repositorio orquestado.
+- **HU-03:** `getMatchDetail(int)` + entidad `Match` completa (estadio, grupo, fase, fecha/hora UTC).
 
 **Próximo paso esperado:**
-Iniciar la Fase 2: Capa de Infraestructura (DataSources API-Football y REST Countries, Modelos DTO con fromJson/toJson, e implementación concreta de `MatchRepository`).
+Iniciar la Fase 3: Capa de Presentación (`HomeScreen`, `MatchDetailScreen`, `FutureBuilder`, `DatePicker`, animaciones y tema visual según `SKILL.md`).

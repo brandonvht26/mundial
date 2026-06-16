@@ -8,12 +8,12 @@
 
 ### Fase 1: Capa de Dominio (Domain)
 - **Objetivo**: Crear entidades (`Match`, `Team`, `Country`) y definir los contratos en interfaces de repositorios.
-- **Modelo sugerido**: Gemini 3.1 Pro (Excelente para abstraer lógica de negocio y definir tipados estrictos en Dart).
+- **Modelo sugerido**: **DeepSeek V4 Pro** (Excelente capacidad de razonamiento lógico y abstracción, ideal para diseñar la arquitectura pura, entidades y contratos sin depender de frameworks externos).
 
 ### Fase 2: Capa de Infraestructura (Infrastructure)
 - **Objetivo**: Configurar DataSources consumiendo API-Football y REST Countries. Mapear JSON a modelos y luego a entidades del dominio.
-- **Modelo sugerido**: Gemini 3.1 Pro (Potente manejo de estructuras JSON y manejo de errores HTTP con Dio).
+- **Modelo sugerido**: **Kimi K2.7 Code** (Al ser un modelo especializado en código, es perfecto para tareas tediosas y precisas como el parseo de JSON, tipado fuerte y manejo de excepciones HTTP con Dio).
 
 ### Fase 3: Capa de Presentación (Presentation)
 - **Objetivo**: Construir `HomeScreen` y `MatchDetailScreen` consumiendo los casos de uso mediante `FutureBuilder`. Implementar `DatePicker` y animaciones.
-- **Modelo sugerido**: Gemini 3.1 Pro (Óptimo para maquetación de UI y uso de widgets nativos siguiendo guías de estilo).
+- **Modelo sugerido**: **Qwen3.7 Max** o **DeepSeek V4 Pro** (Modelos de altísima capacidad, ideales para estructurar la UI de Flutter, manejar estados reactivos complejos y asegurar que se cumpla el `SKILL.md` de diseño visual).
